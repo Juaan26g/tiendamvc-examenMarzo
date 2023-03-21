@@ -35,6 +35,7 @@ class CartController extends Controller
 
     public function addProduct($product_id, $user_id)
     {
+       
         $errors = [];
 
         if ($this->model->verifyProduct($product_id, $user_id) == false) {
@@ -43,6 +44,7 @@ class CartController extends Controller
             }
         }
         $this->index($errors);
+    
     }
 
     public function update()
@@ -103,6 +105,9 @@ class CartController extends Controller
 
     public function paymentmode()
     {
+        $session = new Session();
+        if ($session->getLogin()) {
+
         $data = [
             'titulo' => 'Carrito | Forma de pago',
             'subtitle' => 'Checkout | Forma de pago',
@@ -110,10 +115,16 @@ class CartController extends Controller
         ];
 
         $this->view('carts/paymentmode', $data);
+    } else {
+        header('location:' . ROOT);
+    }
     }
 
     public function verify()
     {
+        $session = new Session();
+        if ($session->getLogin()) {
+
         $session = new Session();
         $user = $session->getUser();
         $cart = $this->model->getCart($user->id);
@@ -128,11 +139,16 @@ class CartController extends Controller
         ];
 
         $this->view('carts/verify', $data);
+    } else {
+        header('location:' . ROOT);
+    }
     }
 
     public function thanks()
     {
         $session = new Session();
+        
+        if ($session->getLogin()) {
         $user = $session->getUser();
 
         if ($this->model->closeCart($user->id, 1)) {
@@ -161,6 +177,9 @@ class CartController extends Controller
             $this->view('mensaje', $data);
 
         }
+    } else {
+        header('location:' . ROOT);
+    }
 
 
     }
